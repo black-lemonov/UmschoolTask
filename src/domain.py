@@ -15,9 +15,10 @@ class Student:
 
 @dataclasses.dataclass
 class ExamRecord:
-    subjectname: str
-    score: int
-    studentid: int
+    id: int = None
+    subjectname: str = None
+    score: int = None
+    studentid: int = None
 
 
 def signup_student(firstname: str, lastname: str) -> Student:
