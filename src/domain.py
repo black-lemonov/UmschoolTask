@@ -2,6 +2,7 @@ import dataclasses
 
 from src import utils
 
+
 class InvalidStudentName(Exception): ...
 
 
@@ -10,9 +11,10 @@ class Student:
     firstname: str
     lastname: str
 
+
 @dataclasses.dataclass(frozen=True)
-class ExamSubject:
-    title: str
+class ExamRecord:
+    subjectname: str
     score: int
 
 
@@ -22,3 +24,7 @@ def signup_student(firstname: str, lastname: str) -> Student:
     if not utils.is_lastname_correct(lastname):
         raise InvalidStudentName("Фамилия должна содержать только буквы")
     return Student(firstname, lastname)
+
+
+def add_record(subjectname: str, score: int) -> ExamRecord:
+    return ExamRecord(subjectname, score)
