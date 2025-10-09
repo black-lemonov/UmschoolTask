@@ -1,4 +1,5 @@
 import dataclasses
+import enum
 
 from src import utils
 
@@ -13,10 +14,16 @@ class Student:
     lastname: str = None
 
 
+class SubjectName(enum.StrEnum):
+    RU = "Русский язык"
+    MATH = "Математика" 
+    EN = "Английский язык"
+
+
 @dataclasses.dataclass
 class ExamRecord:
     id: int = None
-    subjectname: str = None
+    subjectname: SubjectName = None
     score: int = None
     studentid: int = None
 
@@ -29,5 +36,5 @@ def signup_student(firstname: str, lastname: str) -> Student:
     return Student(firstname=firstname, lastname=lastname)
 
 
-def add_record(subjectname: str, score: int, studentid: int) -> ExamRecord:
+def add_record(subjectname: SubjectName, score: int, studentid: int) -> ExamRecord:
     return ExamRecord(subjectname=subjectname, score=score, studentid=studentid)

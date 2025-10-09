@@ -1,4 +1,4 @@
-from sqlalchemy import Table, Column, Integer, String, ForeignKey
+from sqlalchemy import Table, Column, Integer, String, ForeignKey, Enum
 from sqlalchemy.orm import registry, relationship
 
 from src import domain
@@ -19,7 +19,7 @@ examrecords = Table(
     "examrecords",
     mapper_registry.metadata,
     Column("id", Integer, primary_key=True, autoincrement=True),
-    Column("subjectname", String(50)),
+    Column("subjectname", Enum(domain.SubjectName)),
     Column("score", Integer),
     Column("studentid", Integer, ForeignKey("students.id")),
 )

@@ -40,17 +40,17 @@ def test_select_examrecords_by_student_returns_examrecords(session):
             "INSERT INTO examrecords (id, subjectname, score, studentid) VALUES (:id, :subjectname, :score, :studentid)"
         ),
         [
-            dict(id=1,subjectname="Русский язык", score=90, studentid=1),
-            dict(id=2, subjectname="Математика", score=85, studentid=1),
-            dict(id=3, subjectname="Обществознание", score=70, studentid=1),
-            dict(id=4, subjectname="Английский язык", score=98, studentid=2),
+            dict(id=1, subjectname="RU", score=90, studentid=1),
+            dict(id=2, subjectname="MATH", score=85, studentid=1),
+            dict(id=3, subjectname="EN", score=70, studentid=1),
+            dict(id=4, subjectname="RU", score=98, studentid=2),
         ],
     )
 
     expected_records = [
-        domain.ExamRecord(id=1, subjectname="Русский язык", score=90, studentid=1),
-        domain.ExamRecord(id=2, subjectname="Математика", score=85, studentid=1),
-        domain.ExamRecord(id=3, subjectname="Обществознание", score=70, studentid=1),
+        domain.ExamRecord(id=1, subjectname=domain.SubjectName.RU, score=90, studentid=1),
+        domain.ExamRecord(id=2, subjectname=domain.SubjectName.MATH, score=85, studentid=1),
+        domain.ExamRecord(id=3, subjectname=domain.SubjectName.EN, score=70, studentid=1),
     ]
 
     assert session.query(domain.ExamRecord).filter(domain.ExamRecord.studentid==1).all() == expected_records
