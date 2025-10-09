@@ -21,7 +21,7 @@ examrecords = Table(
     Column("id", Integer, primary_key=True, autoincrement=True),
     Column("subjectname", String(50)),
     Column("score", Integer),
-    Column("student", Integer, ForeignKey("students.id")),
+    Column("studentid", Integer, ForeignKey("students.id")),
 )
 
 

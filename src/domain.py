@@ -6,16 +6,17 @@ from src import utils
 class InvalidStudentName(Exception): ...
 
 
-@dataclasses.dataclass(frozen=True)
+@dataclasses.dataclass
 class Student:
     firstname: str
     lastname: str
 
 
-@dataclasses.dataclass(frozen=True)
+@dataclasses.dataclass
 class ExamRecord:
     subjectname: str
     score: int
+    studentid: int
 
 
 def signup_student(firstname: str, lastname: str) -> Student:
