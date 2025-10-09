@@ -4,7 +4,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from fastapi import FastAPI, APIRouter, Body, Query
 
-from src.config import get_postgres_uri
+from src.config import get_postgres_url
 from src.orm import mapper_registry, start_mappers
 from src import repository, services
 
@@ -14,7 +14,7 @@ register_router = APIRouter(tags=["Регистрация"])
 student_router = APIRouter(tags=["Ученик"])
 
 
-engine = create_engine(get_postgres_uri())
+engine = create_engine(get_postgres_url())
 start_mappers()
 mapper_registry.metadata.create_all(engine)
 get_session = sessionmaker(bind=engine)
