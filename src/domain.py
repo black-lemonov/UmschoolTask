@@ -27,5 +27,5 @@ def signup_student(firstname: str, lastname: str) -> Student:
     return Student(firstname, lastname)
 
 
-def add_record(subjectname: str, score: int) -> ExamRecord:
-    return ExamRecord(subjectname, score)
+def add_record(subjectname: str, score: int, studentid: int) -> ExamRecord:
+    return ExamRecord(subjectname, score, studentid)
