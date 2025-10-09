@@ -7,19 +7,19 @@ from src import domain
 def test_select_returns_students(session):
     session.execute(
         text(
-            "INSERT INTO students (firstname, lastname) VALUES (:firstname, :lastname)"
+            "INSERT INTO students (id, firstname, lastname) VALUES (:id, :firstname, :lastname)"
         ),
         [
-            dict(firstname="Иван", lastname="Иванов"),
-            dict(firstname="Денис", lastname="Денисов"),
-            dict(firstname="Андрей", lastname="Андреев"),
+            dict(id=1, firstname="Иван", lastname="Иванов"),
+            dict(id=2, firstname="Денис", lastname="Денисов"),
+            dict(id=3, firstname="Андрей", lastname="Андреев"),
         ],
     )
 
     expected_students = [
-        domain.Student(firstname="Иван", lastname="Иванов"),
-        domain.Student(firstname="Денис", lastname="Денисов"),
-        domain.Student(firstname="Андрей", lastname="Андреев"),
+        domain.Student(id=1, firstname="Иван", lastname="Иванов"),
+        domain.Student(id=2, firstname="Денис", lastname="Денисов"),
+        domain.Student(id=3, firstname="Андрей", lastname="Андреев"),
     ]
 
     assert session.query(domain.Student).all() == expected_students

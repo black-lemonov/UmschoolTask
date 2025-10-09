@@ -8,8 +8,9 @@ class InvalidStudentName(Exception): ...
 
 @dataclasses.dataclass
 class Student:
-    firstname: str
-    lastname: str
+    id: int = None
+    firstname: str = None
+    lastname: str = None
 
 
 @dataclasses.dataclass

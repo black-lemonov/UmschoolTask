@@ -3,7 +3,7 @@ from src import repository, domain
 
 def test_add_student_saves_data(session):
     student_repo = repository.SQLAlchemyStudentRepository(session)
-    added_student = domain.Student("Иван", "Иванов")
+    added_student = domain.Student(1, "Иван", "Иванов")
     student_repo.add(added_student)
     [selected_student] = session.query(domain.Student).all()
     assert added_student == selected_student
