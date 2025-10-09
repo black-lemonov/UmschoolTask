@@ -28,15 +28,12 @@ examrecords = Table(
 def start_mappers():
     mapper_registry.map_imperatively(
         domain.Student,
-        students,
-        properties={
-            "exam_records": relationship(domain.ExamRecord, back_populates="student")
-        }
+        students
     )
     mapper_registry.map_imperatively(
         domain.ExamRecord,
         examrecords,
         properties={
-            "student": relationship(domain.Student, back_populates="exam_records")
+            "student": relationship(domain.Student)
         }
     )
