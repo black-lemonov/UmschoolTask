@@ -26,8 +26,8 @@ def signup_student(firstname: str, lastname: str) -> Student:
         raise InvalidStudentName("Имя должно содержать только буквы")
     if not utils.is_lastname_correct(lastname):
         raise InvalidStudentName("Фамилия должна содержать только буквы")
-    return Student(firstname, lastname)
+    return Student(firstname=firstname, lastname=lastname)
 
 
 def add_record(subjectname: str, score: int, studentid: int) -> ExamRecord:
-    return ExamRecord(subjectname, score, studentid)
+    return ExamRecord(subjectname=subjectname, score=score, studentid=studentid)
