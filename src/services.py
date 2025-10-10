@@ -97,7 +97,7 @@ def delete_record(
     try:
         record = examrecord_repo.get(subjectname, studentid)
     except NoResultFound:
-        raise RecordDoesNotExist("Запись по данному предмету не существует")
+        raise RecordDoesNotExist("Запись по данному предмету не найдена")
 
     examrecord_repo.delete(record)
     session.commit()
@@ -116,7 +116,7 @@ def update_record_score(
     try:
         record = examrecord_repo.get(subjectname, studentid)
     except NoResultFound:
-        raise RecordDoesNotExist("Записи по данному предмету не существует")
+        raise RecordDoesNotExist("Запись по данному предмету не найдена")
     
     record.score = new_score
     session.commit()
