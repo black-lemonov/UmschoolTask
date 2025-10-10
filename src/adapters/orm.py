@@ -18,10 +18,9 @@ students = Table(
 examrecords = Table(
     "examrecords",
     mapper_registry.metadata,
-    Column("id", Integer, primary_key=True, autoincrement=True),
-    Column("subjectname", Enum(domain.SubjectName)),
+    Column("subjectname", Enum(domain.SubjectName), primary_key=True),
     Column("score", Integer),
-    Column("studentid", Integer, ForeignKey("students.id")),
+    Column("studentid", Integer, ForeignKey("students.id"), primary_key=True),
 )
 
 

@@ -12,7 +12,7 @@ def test_add_student_saves_data(session):
 
 def test_add_examrecord_saves_data(session):
     records_repo = repository.SQLAlchemyExamRecordRepository(session)
-    added_record = domain.ExamRecord(1, "Русский язык", 90, 1)
+    added_record = domain.ExamRecord("Русский язык", 90, 1)
     records_repo.add(added_record)
     [selected_record] = session.query(domain.ExamRecord).all()
     assert added_record == selected_record
@@ -21,14 +21,14 @@ def test_add_examrecord_saves_data(session):
 def test_list_records_by_studentid_returns_only_correct_records(session):
     records_repo = repository.SQLAlchemyExamRecordRepository(session)
     all_records = [
-        domain.ExamRecord(1, "Русский язык", 90, 1),
-        domain.ExamRecord(2, "Математика", 85, 1),
-        domain.ExamRecord(3, "Химия", 78, 3),
-        domain.ExamRecord(4, "Биология", 88, 2),
+        domain.ExamRecord("Русский язык", 90, 1),
+        domain.ExamRecord("Математика", 85, 1),
+        domain.ExamRecord("Химия", 78, 3),
+        domain.ExamRecord("Биология", 88, 2),
     ]
     student1_records = [
-        domain.ExamRecord(1, "Русский язык", 90, 1),
-        domain.ExamRecord(2, "Математика", 85, 1),
+        domain.ExamRecord("Русский язык", 90, 1),
+        domain.ExamRecord("Математика", 85, 1),
     ]
     for record in all_records:
         records_repo.add(record)

@@ -1,23 +1,37 @@
-from src import services, domain
+import pytest
+
+from src import domain, services
 from src.adapters import repository
 
 
-def test_signup_returns_not_none_id(session):
-    firstname, lastname = "Иван", "Иванов"
+def test_signup_saves_student_in_db(session):
+    firstname, lastname, studentid = "Иван", "Иванов", 1
     student_repo = repository.SQLAlchemyStudentRepository(session)
-    id_from_service = services.signup(
-        firstname, lastname, student_repo, session
-    )
-    assert id_from_service is not None
-    
+    services.signup(firstname, lastname, studentid, student_repo, session)
+    assert student_repo.get(studentid) is not None
 
-def test_add_record_returns_not_none_id(session):
-    subject, score, student = "RU", 80, 1
-    record_repo = repository.SQLAlchemyExamRecordRepository(session)
-    id_from_service = services.add_record(
-        domain.SubjectName.RU, score, student, record_repo, session
+
+def test_signup_student_with_existing_id_raises_error(session):
+    student_repo = repository.SQLAlchemyStudentRepository(session)
+
+    student1_firstname, student1_lastname, student1_id = "Иван", "Иванов", 1
+    services.signup(
+        student1_firstname, student1_lastname, student1_id, student_repo, session
     )
-    assert id_from_service is not None
+
+    student2_firstname, student2_lastname, student2_id = "Петр", "Петров", 1
+
+    with pytest.raises(services.StudentAlreadyExists):
+        services.signup(
+            student2_firstname, student2_lastname, student2_id, student_repo, session
+        )
+
+
+def test_add_record_saves_record_in_db(session):
+    subject, score, student = domain.SubjectName.RU, 80, 1
+    record_repo = repository.SQLAlchemyExamRecordRepository(session)
+    services.add_record(subject, score, student, record_repo, session)
+    assert record_repo.get(subject, student) is not None
 
 
 def test_list_records_returns_existing_values(session):
@@ -29,8 +43,6 @@ def test_list_records_returns_existing_values(session):
     ]
     for record in records:
         record_repo.add(record)
-    
-    expected_pairs = {
-        r.subjectname: r.score for r in records if r.studentid == 1
-    }
+
+    expected_pairs = {r.subjectname: r.score for r in records if r.studentid == 1}
     assert services.list_records(1, record_repo) == expected_pairs
