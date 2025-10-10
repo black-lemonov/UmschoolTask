@@ -5,8 +5,9 @@ from sqlalchemy.orm import sessionmaker
 from fastapi import FastAPI, APIRouter, Body, Query
 
 from src.config import get_postgres_url
-from src.orm import start_mappers
-from src import repository, services
+from src.adapters.orm import start_mappers
+from src.adapters import repository
+from src import services
 
 
 app = FastAPI()
