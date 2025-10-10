@@ -2,9 +2,6 @@ import dataclasses
 import enum
 
 
-class InvalidStudentName(Exception): ...
-
-
 @dataclasses.dataclass
 class Student:
     id: int
