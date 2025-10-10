@@ -1,4 +1,11 @@
 services:
+  app:
+    build: .
+    ports:
+      - "8000:5000"
+    depends_on:
+      - db
+
   db:
     image: postgres
     hostname: $DB_HOST

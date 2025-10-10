@@ -6,8 +6,8 @@ load_dotenv()
 
 
 def get_postgres_url() -> str:
-    host = os.getenv("DB_HOST", "localhost")
-    port = os.getenv("DB_PORT", "54321")
+    host = "db"
+    port = "5432"
     password = os.getenv("DB_PASSWORD", "password")
     user = os.getenv("DB_USER", "umschool")
     db_name = os.getenv("DB_NAME", "umschool")
