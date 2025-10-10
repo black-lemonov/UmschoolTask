@@ -1,61 +1,107 @@
 from typing import Annotated
 
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from fastapi import FastAPI, APIRouter, Body, Query, HTTPException, status
+from fastapi import APIRouter, Query, HTTPException, status
 
-from src.config import get_postgres_url
-from src.adapters.orm import start_mappers
 from src.adapters import repository
 from src import services
-from src.entrypoints.fastapi_app import enums
+from src.entrypoints.fastapi_app import deps, schemas
 
 
-app = FastAPI()
-auth_router = APIRouter(tags=["Вход/Регистрация"])
-scores_router = APIRouter(tags=["Управление результатами"])
+student_router = APIRouter(tags=["Профиль"])
+records_router = APIRouter(tags=["Управление результатами"])
 
 
-engine = create_engine(get_postgres_url())
-start_mappers()
-get_session = sessionmaker(bind=engine)
-
-
-@auth_router.post("/signup", summary="Создать запись ученика")
+@student_router.post("/signup", summary="Создать запись ученика")
 def signup(
-    firstname: Annotated[str, Body()],
-    lastname: Annotated[str, Body()],
-    studentid: Annotated[int, Body()],
+    student: schemas.SignUpStudent,
+    session: deps.SessionDep,
 ):
-    session = get_session()
     student_repo = repository.SQLAlchemyStudentRepository(session)
     try:
-        services.signup(firstname, lastname, studentid, student_repo, session)
+        services.signup(
+            student.firstname,
+            student.lastname,
+            student.studentid,
+            student_repo,
+            session,
+        )
     except services.StudentAlreadyExists as e:
         return HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
     return {"msg": "Запись ученика создана"}
 
 
-@scores_router.post("/scores", summary="Добавить баллы по предмету")
-def add_score(
-    subjectname: Annotated[enums.SubjectName, Query(description="название предмета")],
-    score: Annotated[int, Query(description="кол-во баллов")],
-    studentid: Annotated[int, Query(description="id ученика")],
+@student_router.post("/signin", summary="Войти по id")
+def signin(student: schemas.SignInStudent, session: deps.SessionDep): 
+    student_repo = repository.SQLAlchemyStudentRepository(session)
+    try:
+        services.signin(student.studentid, student_repo)
+    except services.StudentDoesNotExist as e:
+        return HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
+    return {"msg": "Вход выполнен"}
+
+
+@student_router.put("/student", summary="Изменить личные данные пользователя")
+def update_student(student: schemas.UpdateStudent, session: deps.SessionDep):
+    student_repo = repository.SQLAlchemyStudentRepository(session)
+    try:
+        services.update_student(
+            student.firstname,
+            student.lastname,
+            student.studentid,
+            student_repo,
+            session
+        )
+    except services.StudentDoesNotExist as e:
+        return HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
+    return {"msg": "Информация обновлена"}
+
+
+@records_router.post("/records", summary="Добавить баллы по предмету")
+def add_record(
+    examrecord: schemas.AddExamRecord,
+    session: deps.SessionDep,
 ):
-    session = get_session()
     records_repo = repository.SQLAlchemyExamRecordRepository(session)
-    services.add_record(subjectname, score, studentid, records_repo, session)
+    try:
+        services.add_record(
+            examrecord.subjectname,
+            examrecord.score,
+            examrecord.studentid,
+            records_repo,
+            session,
+        )
+    except services.RecordAlreadyExists as e:
+        return HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
     return {"msg": "Запись успешно добавлена"}
 
 
-@scores_router.get("/scores", summary="Получить все предметы с баллами ученика")
+@records_router.delete("/records", summary="Удалить запись по предмету")
+def delete_record(record: schemas.DeleteRecord, session: deps.SessionDep):
+    records_repo = repository.SQLAlchemyExamRecordRepository(session)
+    try:
+        services.delete_record(
+            record.subjectname, record.studentid, records_repo, session
+        )
+    except services.RecordDoesNotExist as e:
+        return HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
+    return {"msg": "Запись успешно удалена"}
+
+
+@records_router.patch("/records", summary="Изменить баллы по предмету")
+def update_record_score(record: schemas.UpdateRecordScore, session: deps.SessionDep):
+    records_repo = repository.SQLAlchemyExamRecordRepository(session)
+    try:
+        services.update_record_score(
+            record.subjectname, record.new_score, record.studentid, records_repo, session
+        ) 
+    except services.RecordDoesNotExist as e:
+        return HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
+    return {"msg": "Баллы успешно обновлены!"}
+
+
+@records_router.get("/scores", summary="Получить все предметы с баллами ученика")
 def list_records(
-    studentid: Annotated[int, Query(description="id ученика")],
+    studentid: Annotated[int, Query(description="id ученика")], session: deps.SessionDep
 ):
-    session = get_session()
     records_repo = repository.SQLAlchemyExamRecordRepository(session)
     return services.list_records(studentid, records_repo)
-
-
-app.include_router(auth_router)
-app.include_router(scores_router)

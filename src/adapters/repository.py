@@ -23,6 +23,9 @@ class AbstractExamRecordRepository(abc.ABC):
     @abc.abstractmethod
     def add(self, examrecord: domain.ExamRecord) -> None: ...
 
+    @abc.abstractmethod
+    def delete(self, examrecord: domain.ExamRecord) -> None: ...
+
 
 class SQLAlchemyStudentRepository(AbstractStudentRepository):
     def __init__(self, session: Session):
@@ -32,7 +35,7 @@ class SQLAlchemyStudentRepository(AbstractStudentRepository):
         return self.session.query(domain.Student).filter_by(id=id).one()
     
     def add(self, student: domain.Student) -> None:
-        return self.session.add(student)
+        self.session.add(student)
 
 
 class SQLAlchemyExamRecordRepository(AbstractExamRecordRepository):
@@ -43,7 +46,10 @@ class SQLAlchemyExamRecordRepository(AbstractExamRecordRepository):
         return self.session.query(domain.ExamRecord).filter_by(subjectname=subjectname, studentid=studentid).one()
     
     def add(self, examrecord: domain.ExamRecord) -> None:
-        return self.session.add(examrecord)
+        self.session.add(examrecord)
     
     def list(self, studentid: int) -> list[domain.ExamRecord]:
         return self.session.query(domain.ExamRecord).filter_by(studentid=studentid).all()
+    
+    def delete(self, examrecord: domain.ExamRecord) -> None:
+        self.session.delete(examrecord)
