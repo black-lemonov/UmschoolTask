@@ -48,7 +48,7 @@ def add_score(
     return {"msg": "Запись успешно добавлена"}
 
 
-@scores_router.get("/scores", summary="Получить баллы ученика")
+@scores_router.get("/scores", summary="Получить все предметы с баллами ученика")
 def list_records(
     studentid: Annotated[int, Query(description="id ученика")],
 ):

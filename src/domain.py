@@ -1,8 +1,6 @@
 import dataclasses
 import enum
 
-from src import utils
-
 
 class InvalidStudentName(Exception): ...
 
@@ -40,10 +38,6 @@ class ExamRecord:
 
 
 def signup_student(firstname: str, lastname: str, studentid: int) -> Student:
-    if not utils.is_firstname_correct(firstname):
-        raise InvalidStudentName("Имя должно содержать только буквы русского алфавита")
-    if not utils.is_lastname_correct(lastname):
-        raise InvalidStudentName("Фамилия должна содержать только буквы русского алфавита")
     return Student(firstname=firstname, lastname=lastname, id=studentid)
 
 

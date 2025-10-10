@@ -29,7 +29,7 @@ def upgrade() -> None:
     )
     op.create_table('examrecords',
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
-    sa.Column('subjectname', sa.Enum('RU', 'MATH', 'EN', name='subjectname'), nullable=True),
+    sa.Column('subjectname', sa.Enum("RU", "MATH", "EN", "SOCIAL", "PHYSICS", "CHEM", "BIO", "GEO", "LIT", "IT", "HISTORY", "DE", "FR", "ES", "CN", name='subjectname'), nullable=True),
     sa.Column('score', sa.Integer(), nullable=True),
     sa.Column('studentid', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['studentid'], ['students.id'], ),
