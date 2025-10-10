@@ -1,4 +1,5 @@
-from src import repository, domain
+from src import domain
+from src.adapters import repository
 
 
 def test_add_student_saves_data(session):

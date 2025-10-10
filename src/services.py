@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 
-from src import repository, domain
+from src import domain
+from src.adapters import repository
 
 
 def signup(firstname: str, lastname: str, student_repo: repository.AbstractStudentRepository, session: Session) -> int:

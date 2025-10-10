@@ -1,4 +1,3 @@
-import pytest
 from sqlalchemy import text
 
 from src import domain

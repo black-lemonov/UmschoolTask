@@ -1,4 +1,5 @@
-from src import repository, services, domain
+from src import services, domain
+from src.adapters import repository
 
 
 def test_signup_returns_not_none_id(session):
