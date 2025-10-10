@@ -1,0 +1,1 @@
+docker run --name db -v pgdata:/var/lib/postgresql/data -p 54321:5432 -e POSTGRES_PASSWORD=123 -e POSTGRES_USER=umschool -e POSTGRES_DB=umschool -d postgres

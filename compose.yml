@@ -4,17 +4,32 @@ services:
     ports:
       - "8000:5000"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+    develop:   
+      watch:
+        - action: sync
+          path: .
+          target: /app
+    networks:
+     - app-network
 
   db:
     image: postgres
-    hostname: $DB_HOST
     ports:
       - "54321:5432"
     environment:
       POSTGRES_USER: $DB_USER
       POSTGRES_DB: $DB_NAME
       POSTGRES_PASSWORD: $DB_PASSWORD
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $DB_USER -d $DB_NAME"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - app-network
     volumes:
       - pgdata:/var/lib/postgresql/data
 
@@ -26,7 +41,14 @@ services:
       PGADMIN_DEFAULT_PASSWORD: $DB_PASSWORD
       PGADMIN_DEFAULT_EMAIL: $DB_EMAIL
     depends_on:
-      - db 
+      db:
+        condition: service_healthy 
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
 
 volumes:
   pgdata:
