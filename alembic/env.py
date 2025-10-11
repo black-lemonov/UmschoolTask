@@ -5,7 +5,7 @@ from sqlalchemy import pool
 
 from alembic import context
 
-from src.config import get_postgres_url
+from src.config import get_alembic_postgres_url
 from src.adapters.orm import mapper_registry
 
 # this is the Alembic Config object, which provides
@@ -61,7 +61,7 @@ def run_migrations_online() -> None:
 
     """
     configuration = config.get_section(config.config_ini_section, {})
-    configuration["sqlalchemy.url"] = get_postgres_url()
+    configuration["sqlalchemy.url"] = get_alembic_postgres_url()
 
     connectable = engine_from_config(
         configuration,

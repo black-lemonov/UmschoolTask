@@ -1,17 +1,17 @@
 from typing import Annotated
 
 from fastapi import Depends
-from sqlalchemy import create_engine
-from sqlalchemy.orm import Session, sessionmaker
+from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
 
 from src.config import get_postgres_url
 
-engine = create_engine(get_postgres_url())
-session_factory = sessionmaker(bind=engine)
+engine = create_async_engine(get_postgres_url())
+session_factory = async_sessionmaker(bind=engine)
 
 
-def get_session():
-    yield session_factory()
+async def get_session():
+    async with session_factory() as session:
+        yield session
 
 
-SessionDep = Annotated[Session, Depends(get_session)]
+SessionDep = Annotated[AsyncSession, Depends(get_session)]

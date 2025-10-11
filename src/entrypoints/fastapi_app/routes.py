@@ -1,24 +1,23 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Query, HTTPException, status
+from fastapi import APIRouter, HTTPException, Query, status
 
-from src.adapters import repository
 from src import services
+from src.adapters import repository
 from src.entrypoints.fastapi_app import deps, schemas
-
 
 student_router = APIRouter(tags=["Профиль"])
 records_router = APIRouter(tags=["Управление результатами"])
 
 
 @student_router.post("/signup", summary="Создать запись ученика")
-def signup(
+async def signup(
     student: schemas.SignUpStudent,
     session: deps.SessionDep,
 ):
     student_repo = repository.SQLAlchemyStudentRepository(session)
     try:
-        services.signup(
+        await services.signup(
             student.firstname,
             student.lastname,
             student.studentid,
@@ -31,25 +30,25 @@ def signup(
 
 
 @student_router.post("/signin", summary="Войти по id")
-def signin(student: schemas.SignInStudent, session: deps.SessionDep): 
+async def signin(student: schemas.SignInStudent, session: deps.SessionDep):
     student_repo = repository.SQLAlchemyStudentRepository(session)
     try:
-        services.signin(student.studentid, student_repo)
+        await services.signin(student.studentid, student_repo)
     except services.StudentDoesNotExist as e:
         return HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
     return {"msg": "Вход выполнен"}
 
 
 @student_router.put("/student", summary="Изменить личные данные пользователя")
-def update_student(student: schemas.UpdateStudent, session: deps.SessionDep):
+async def update_student(student: schemas.UpdateStudent, session: deps.SessionDep):
     student_repo = repository.SQLAlchemyStudentRepository(session)
     try:
-        services.update_student(
+        await services.update_student(
             student.firstname,
             student.lastname,
             student.studentid,
             student_repo,
-            session
+            session,
         )
     except services.StudentDoesNotExist as e:
         return HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
@@ -57,13 +56,13 @@ def update_student(student: schemas.UpdateStudent, session: deps.SessionDep):
 
 
 @records_router.post("/records", summary="Добавить баллы по предмету")
-def add_record(
+async def add_record(
     examrecord: schemas.AddExamRecord,
     session: deps.SessionDep,
 ):
     records_repo = repository.SQLAlchemyExamRecordRepository(session)
     try:
-        services.add_record(
+        await services.add_record(
             examrecord.subjectname,
             examrecord.score,
             examrecord.studentid,
@@ -76,10 +75,10 @@ def add_record(
 
 
 @records_router.delete("/records", summary="Удалить запись по предмету")
-def delete_record(record: schemas.DeleteRecord, session: deps.SessionDep):
+async def delete_record(record: schemas.DeleteRecord, session: deps.SessionDep):
     records_repo = repository.SQLAlchemyExamRecordRepository(session)
     try:
-        services.delete_record(
+        await services.delete_record(
             record.subjectname, record.studentid, records_repo, session
         )
     except services.RecordDoesNotExist as e:
@@ -88,20 +87,26 @@ def delete_record(record: schemas.DeleteRecord, session: deps.SessionDep):
 
 
 @records_router.patch("/records", summary="Изменить баллы по предмету")
-def update_record_score(record: schemas.UpdateRecordScore, session: deps.SessionDep):
+async def update_record_score(
+    record: schemas.UpdateRecordScore, session: deps.SessionDep
+):
     records_repo = repository.SQLAlchemyExamRecordRepository(session)
     try:
-        services.update_record_score(
-            record.subjectname, record.new_score, record.studentid, records_repo, session
-        ) 
+        await services.update_record_score(
+            record.subjectname,
+            record.new_score,
+            record.studentid,
+            records_repo,
+            session,
+        )
     except services.RecordDoesNotExist as e:
         return HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
     return {"msg": "Баллы успешно обновлены!"}
 
 
 @records_router.get("/scores", summary="Получить все предметы с баллами ученика")
-def list_records(
+async def list_records(
     studentid: Annotated[int, Query(description="id ученика")], session: deps.SessionDep
 ):
     records_repo = repository.SQLAlchemyExamRecordRepository(session)
-    return services.list_records(studentid, records_repo)
+    return await services.list_records(studentid, records_repo)

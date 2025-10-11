@@ -1,13 +1,14 @@
 import abc
 
-from sqlalchemy.orm import Session
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from src import domain
 
 
 class AbstractStudentRepository(abc.ABC):
     @abc.abstractmethod
-    def get(self, id: int) -> domain.Student: ...
+    async def get(self, id: int) -> domain.Student: ...
 
     @abc.abstractmethod
     def add(self, student: domain.Student) -> None: ...
@@ -15,41 +16,44 @@ class AbstractStudentRepository(abc.ABC):
 
 class AbstractExamRecordRepository(abc.ABC):
     @abc.abstractmethod
-    def get(self, subjectname: domain.SubjectName, studentid: int) -> domain.ExamRecord: ...
+    async def get(self, subjectname: domain.SubjectName, studentid: int) -> domain.ExamRecord: ...
 
     @abc.abstractmethod
-    def list(self, studentid: int) -> list[domain.ExamRecord]: ...
+    async def list(self, studentid: int) -> list[domain.ExamRecord]: ...
 
     @abc.abstractmethod
     def add(self, examrecord: domain.ExamRecord) -> None: ...
 
     @abc.abstractmethod
-    def delete(self, examrecord: domain.ExamRecord) -> None: ...
+    async def delete(self, examrecord: domain.ExamRecord) -> None: ...
 
 
 class SQLAlchemyStudentRepository(AbstractStudentRepository):
-    def __init__(self, session: Session):
+    def __init__(self, session: AsyncSession):
         self.session = session
     
-    def get(self, id: int) -> domain.Student:
-        return self.session.query(domain.Student).filter_by(id=id).one()
+    async def get(self, id: int) -> domain.Student:
+        result = await self.session.execute(select(domain.Student).filter_by(id=id))
+        return result.scalars().one()
     
     def add(self, student: domain.Student) -> None:
         self.session.add(student)
 
 
 class SQLAlchemyExamRecordRepository(AbstractExamRecordRepository):
-    def __init__(self, session: Session):
+    def __init__(self, session: AsyncSession):
         self.session = session
     
-    def get(self, subjectname: domain.SubjectName, studentid: int) -> domain.ExamRecord:
-        return self.session.query(domain.ExamRecord).filter_by(subjectname=subjectname, studentid=studentid).one()
+    async def get(self, subjectname: domain.SubjectName, studentid: int) -> domain.ExamRecord:
+        result = await self.session.execute(select(domain.ExamRecord).filter_by(subjectname=subjectname, studentid=studentid))
+        return result.scalars().one()
     
     def add(self, examrecord: domain.ExamRecord) -> None:
         self.session.add(examrecord)
     
-    def list(self, studentid: int) -> list[domain.ExamRecord]:
-        return self.session.query(domain.ExamRecord).filter_by(studentid=studentid).all()
+    async def list(self, studentid: int) -> list[domain.ExamRecord]:
+        result = await self.session.execute(select(domain.ExamRecord).filter_by(studentid=studentid))
+        return result.scalars().all()
     
-    def delete(self, examrecord: domain.ExamRecord) -> None:
-        self.session.delete(examrecord)
+    async def delete(self, examrecord: domain.ExamRecord) -> None:
+        await self.session.delete(examrecord)
