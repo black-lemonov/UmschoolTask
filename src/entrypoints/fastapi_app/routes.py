@@ -188,16 +188,14 @@ async def update_record_score(
 @records_router.get(
     "/scores",
     summary="Получить все предметы с баллами ученика",
-    response_model=list[schemas.ExamRecord],
     responses={
         200: {
             "description": "Список записей успешно получен",
-            "model": list[schemas.ExamRecord],
         }
     },
 )
 async def list_records(
-    studentid: Annotated[int, Query(description="id ученика")], session: deps.SessionDep
+    studentid: Annotated[int, Query(description="ID ученика")], session: deps.SessionDep
 ):
     records_repo = repository.SQLAlchemyExamRecordRepository(session)
     return await services.list_records(studentid, records_repo)
