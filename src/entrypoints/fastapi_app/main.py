@@ -14,7 +14,7 @@ async def lifespan(app: FastAPI):
     clear_mappers()
 
 
-app = FastAPI(lifespan=lifespan)
+app = FastAPI(title="Баллы по ЕГЭ 🎓", lifespan=lifespan)
 
 app.include_router(routes.student_router)
 app.include_router(routes.records_router)

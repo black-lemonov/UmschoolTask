@@ -21,29 +21,46 @@ class StudentName(BaseModel):
 
 
 class SignUpStudent(StudentName):
-    studentid: Annotated[int, Field(description="id ученика")]
+    studentid: Annotated[int, Field(description="ID ученика")]
 
 
 class SignInStudent(BaseModel):
-    studentid: Annotated[int, Field(description="id ученика")]
+    studentid: Annotated[int, Field(description="ID ученика")]
 
 
 class UpdateStudent(StudentName):
-    studentid: Annotated[int, Field(description="id ученика")]
+    studentid: Annotated[int, Field(description="ID ученика")]
 
 
 class AddExamRecord(BaseModel):
-    subjectname: Annotated[enums.SubjectName, Field(description="название предмета")]
-    score: Annotated[int, Field(description="кол-во баллов", ge=0, le=100)]
-    studentid: Annotated[int, Field(description="id ученика")]
+    subjectname: Annotated[enums.SubjectName, Field(description="Название предмета")]
+    score: Annotated[int, Field(description="Кол-во баллов", ge=0, le=100)]
+    studentid: Annotated[int, Field(description="ID ученика")]
 
 
 class UpdateRecordScore(BaseModel):
-    subjectname: Annotated[enums.SubjectName, Field(description="название предмета")]
-    new_score: Annotated[int, Field(description="новое кол-во баллов", ge=0, le=100)]
-    studentid: Annotated[int, Field(description="id ученика")]
+    subjectname: Annotated[enums.SubjectName, Field(description="Название предмета")]
+    new_score: Annotated[int, Field(description="Новое кол-во баллов", ge=0, le=100)]
+    studentid: Annotated[int, Field(description="ID ученика")]
 
 
 class DeleteRecord(BaseModel):
-    subjectname: Annotated[enums.SubjectName, Field(description="название предмета")]
-    studentid: Annotated[int, Field(description="id ученика")]
+    subjectname: Annotated[enums.SubjectName, Field(description="Название предмета")]
+    studentid: Annotated[int, Field(description="ID ученика")]
+
+
+class SuccessMessageResponse(BaseModel):
+    msg: Annotated[
+        str, Field(description="Описание ответа", examples=["Операция выполнена"])
+    ]
+
+
+class ErrorMessageResponse(BaseModel):
+    msg: Annotated[
+        str, Field(description="Описание ошибки", examples=["Сообщение ошибки"])
+    ]
+
+
+class ExamRecord(BaseModel):
+    subjectname: Annotated[enums.SubjectName, Field(description="Название предмета")]
+    score: Annotated[int, Field(description="Количество баллов", ge=0, le=100)]
