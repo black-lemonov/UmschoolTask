@@ -62,6 +62,6 @@ async def try_get_student_records(studentid: int) -> dict[str, int]:
                 if response.status == 200:
                     return await response.json()
                 elif response.status == 401:
-                    return await exc.Unauthorized("Вы не зарегистрированы")
+                    raise exc.Unauthorized("Вы не зарегистрированы")
     except aiohttp.ClientConnectionError:
         raise exc.APIError("Клиент временно недоступен")
