@@ -4,11 +4,12 @@ from fastapi import APIRouter, Query, Response, status
 
 from src import services
 from src.adapters import repository
-from src.entrypoints.fastapi_app import deps, schemas
+from src.entrypoints.fastapi_app import deps, schemas, enums
 
 
 student_router = APIRouter(tags=["Профиль 👤"])
 records_router = APIRouter(tags=["Предметы и баллы ✍️"])
+service_router = APIRouter(tags=["Служебные функции ⚙️"])
 
 
 @student_router.post(
@@ -191,6 +192,7 @@ async def update_record_score(
     responses={
         200: {
             "description": "Список записей успешно получен",
+            "model": dict[str, int]
         }
     },
 )
@@ -199,3 +201,17 @@ async def list_records(
 ):
     records_repo = repository.SQLAlchemyExamRecordRepository(session)
     return await services.list_records(studentid, records_repo)
+
+
+@service_router.get(
+        "/subjects",
+        summary="Получить список доступных предметов",
+        responses={
+            200: {
+                "description": "Список названий предметов",
+                "model":  list[str]
+            }
+        }
+)
+def get_available_subjects():
+    return [subject for subject in enums.SubjectName]

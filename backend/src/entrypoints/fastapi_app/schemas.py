@@ -59,8 +59,3 @@ class ErrorMessageResponse(BaseModel):
     msg: Annotated[
         str, Field(description="Описание ошибки", examples=["Сообщение ошибки"])
     ]
-
-
-class ExamRecord(BaseModel):
-    subjectname: Annotated[enums.SubjectName, Field(description="Название предмета")]
-    score: Annotated[int, Field(description="Количество баллов", ge=0, le=100)]

@@ -18,3 +18,4 @@ app = FastAPI(title="Баллы по ЕГЭ 🎓", lifespan=lifespan)
 
 app.include_router(routes.student_router)
 app.include_router(routes.records_router)
+app.include_router(routes.service_router)
