@@ -20,7 +20,7 @@ examrecords = Table(
     mapper_registry.metadata,
     Column("subjectname", Enum(domain.SubjectName), primary_key=True),
     Column("score", Integer),
-    Column("studentid", Integer, ForeignKey("students.id"), primary_key=True),
+    Column("studentid", Integer, ForeignKey("students.id", ondelete="CASCADE"), primary_key=True),
 )
 
 
