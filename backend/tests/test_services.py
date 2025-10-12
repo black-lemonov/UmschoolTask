@@ -83,19 +83,28 @@ async def test_update_student_with_non_existing_id_raises_error(session: AsyncSe
 
 @pytest.mark.asyncio
 async def test_add_record_saves_record_in_db(session: AsyncSession):
+    student_repo = repository.SQLAlchemyStudentRepository(session)
+    student_repo.add(domain.Student(1, "Иван", "Иванов"))
+
     subject, score, student = domain.SubjectName.RU, 80, 1
     record_repo = repository.SQLAlchemyExamRecordRepository(session)
     await services.add_record(subject, score, student, record_repo, session)
+
     added_record = await record_repo.get(subject, student)
     assert added_record is not None
 
 
 @pytest.mark.asyncio
 async def test_delete_existing_record_deletes_record_in_db(session: AsyncSession):
+    student_repo = repository.SQLAlchemyStudentRepository(session)
+    student_repo.add(domain.Student(1, "Иван", "Иванов"))
+
     record_repo = repository.SQLAlchemyExamRecordRepository(session)
     subject, score, student = domain.SubjectName.RU, 80, 1
     record_repo.add(domain.ExamRecord(subject, score, student))
+
     await services.delete_record(subject, student, record_repo, session)
+
     with pytest.raises(NoResultFound):
         await record_repo.get(subject, student)
 
@@ -113,14 +122,19 @@ async def test_delete_non_existing_record_raises_error(session: AsyncSession):
 
 @pytest.mark.asyncio
 async def test_update_record_score_updates_db(session: AsyncSession):
+    student_repo = repository.SQLAlchemyStudentRepository(session)
+    student_repo.add(domain.Student(1, "Иван", "Иванов"))
+
     record_repo = repository.SQLAlchemyExamRecordRepository(session)
     subject, old_score, student = domain.SubjectName.BIO, 80, 1
     record = domain.ExamRecord(subject, old_score, student)
     record_repo.add(record)
+
     new_score = 100
     await services.update_record_score(
         subject, new_score, student, record_repo, session
     )
+
     assert record.score == new_score
 
 
@@ -146,6 +160,10 @@ async def test_update_non_existing_record_raises_error(session: AsyncSession):
 
 @pytest.mark.asyncio
 async def test_list_records_returns_existing_values(session: AsyncSession):
+    student_repo = repository.SQLAlchemyStudentRepository(session)
+    student_repo.add(domain.Student(1, "Иван", "Иванов"))
+    student_repo.add(domain.Student(2, "Петр", "Петров"))
+
     record_repo = repository.SQLAlchemyExamRecordRepository(session)
     records = [
         domain.ExamRecord(subjectname=domain.SubjectName.RU, score=40, studentid=1),
