@@ -33,14 +33,6 @@ router = APIRouter(tags=["Предметы и баллы ✍️"])
 async def add_record(
     examrecord: schemas.AddRecord, session: deps.SessionDep, response: Response
 ):
-    student_repo = repository.SQLAlchemyStudentRepository(session)
-
-    try:
-        await services.signin(examrecord.studentid, student_repo)
-    except services.StudentDoesNotExist:
-        response.status_code = 401
-        return student_schemas.StudentDoesNotExist()
-
     records_repo = repository.SQLAlchemyExamRecordRepository(session)
     try:
         await services.add_record(
@@ -53,6 +45,9 @@ async def add_record(
     except services.RecordAlreadyExists:
         response.status_code = status.HTTP_400_BAD_REQUEST
         return schemas.RecordAlreadyExists()
+    except services.StudentDoesNotExist:
+        response.status_code = 401
+        return student_schemas.StudentDoesNotExist()
 
     return schemas.RecordAdded()
 
@@ -65,10 +60,6 @@ async def add_record(
             "description": "Запись успешно удалена",
             "model": schemas.RecordDeleted,
         },
-        401: {
-            "description": "Ученик не найден",
-            "model": student_schemas.StudentDoesNotExist,
-        },
         404: {
             "description": "Запись не найдена",
             "model": schemas.RecordDoesNotExist,
@@ -78,14 +69,6 @@ async def add_record(
 async def delete_record(
     record: schemas.DeleteRecord, session: deps.SessionDep, response: Response
 ):
-    student_repo = repository.SQLAlchemyStudentRepository(session)
-
-    try:
-        await services.signin(record.studentid, student_repo)
-    except services.StudentDoesNotExist:
-        response.status_code = 401
-        return student_schemas.StudentDoesNotExist()
-
     records_repo = repository.SQLAlchemyExamRecordRepository(session)
     try:
         await services.delete_record(
@@ -119,14 +102,6 @@ async def delete_record(
 async def update_record_score(
     record: schemas.UpdateRecordScore, session: deps.SessionDep, response: Response
 ):
-    student_repo = repository.SQLAlchemyStudentRepository(session)
-
-    try:
-        await services.signin(record.studentid, student_repo)
-    except services.StudentDoesNotExist:
-        response.status_code = 401
-        return student_schemas.StudentDoesNotExist()
-
     records_repo = repository.SQLAlchemyExamRecordRepository(session)
     try:
         await services.update_record_score(

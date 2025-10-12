@@ -95,6 +95,17 @@ async def test_add_record_saves_record_in_db(session: AsyncSession):
 
 
 @pytest.mark.asyncio
+async def test_add_record_of_non_existing_student_raises_error(session: AsyncSession):
+    subject, score, non_exsisting_student = domain.SubjectName.RU, 80, 1
+    record_repo = repository.SQLAlchemyExamRecordRepository(session)
+
+    with pytest.raises(services.StudentDoesNotExist):
+        await services.add_record(
+            subject, score, non_exsisting_student, record_repo, session
+        )
+
+
+@pytest.mark.asyncio
 async def test_delete_existing_record_deletes_record_in_db(session: AsyncSession):
     student_repo = repository.SQLAlchemyStudentRepository(session)
     student_repo.add(domain.Student(1, "Иван", "Иванов"))

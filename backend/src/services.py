@@ -1,4 +1,4 @@
-from sqlalchemy.exc import NoResultFound
+from sqlalchemy.exc import NoResultFound, IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src import domain
@@ -86,10 +86,12 @@ async def add_record(
     except NoResultFound:
         pass
 
-    new_record = domain.add_record(subjectname, score, studentid)
-    examrecord_repo.add(new_record)
-
-    await session.commit()
+    try:
+        new_record = domain.add_record(subjectname, score, studentid)
+        examrecord_repo.add(new_record)
+        await session.commit()
+    except IntegrityError:
+        raise StudentDoesNotExist("Ученик не найден")
 
 
 async def delete_record(
