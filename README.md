@@ -53,15 +53,10 @@ docker compose up
 ### 🧪 Тестирование
 Для запуска тестов выполните следующие команды:
 ```sh
-cd backend
-
 # Запуск тестовой базы данных
-docker run -p 54321:5432 \
-  -e POSTGRES_PASSWORD=123 \
-  -e POSTGRES_USER=test \
-  -e POSTGRES_DB=test \
-  -d postgres
+docker run -p 54321:5432 --env-file=test.env -d postgres
 
 # Запуск тестов
+cd backend
 pytest
 ```
