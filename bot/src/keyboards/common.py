@@ -1,15 +1,14 @@
-from aiogram.utils.formatting import as_key_value, as_list, as_section, Text
+from aiogram.utils.formatting import Text
 
 
 def get_start_message() -> Text:
-    return as_section(
-        "Привет 👋 Я бот для просмотра баллов по ЕГЭ!",
-        as_section(
-            "Мои команды:",
-            as_list(
-                as_key_value("/register", " Регистрация"),
-                as_key_value("/view_scores", " Смотреть баллы"),
-                as_key_value("/enter_scores", " Добавить предмет"),
-            ),
-        ),
+    welcome_text = Text(
+        "Привет! ✨\n\n"
+        "Я бот для просмотра баллов по ЕГЭ.\n\n"
+        "Вот что я умею:\n"
+        "📝 /register — представиться боту\n"
+        "➕ /enter_scores — добавить новый балл\n"
+        "📊 /view_scores — посмотреть всю свою статистику\n\n"
+        "Жми /register, чтобы начать!"
     )
+    return welcome_text
