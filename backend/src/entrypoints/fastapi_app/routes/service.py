@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from src.entrypoints.fastapi_app import enums
+from src.domain import SubjectName
 
 router = APIRouter(tags=["Служебные функции ⚙️"])
 
@@ -11,4 +11,4 @@ router = APIRouter(tags=["Служебные функции ⚙️"])
     responses={200: {"description": "Список названий предметов", "model": list[str]}},
 )
 def get_available_subjects():
-    return [subject for subject in enums.SubjectName]
+    return [subject for subject in SubjectName]

@@ -2,11 +2,11 @@ from typing import Annotated
 
 from pydantic import BaseModel, Field
 
-from src.entrypoints.fastapi_app import enums
+from src.domain import SubjectName
 
 
 class AddRecord(BaseModel):
-    subjectname: Annotated[enums.SubjectName, Field(description="Название предмета")]
+    subjectname: Annotated[SubjectName, Field(description="Название предмета")]
     score: Annotated[int, Field(description="Кол-во баллов", ge=0, le=100)]
     studentid: Annotated[int, Field(description="ID ученика")]
 
@@ -24,7 +24,7 @@ class RecordDoesNotExist(BaseModel):
 
 
 class DeleteRecord(BaseModel):
-    subjectname: Annotated[enums.SubjectName, Field(description="Название предмета")]
+    subjectname: Annotated[SubjectName, Field(description="Название предмета")]
     studentid: Annotated[int, Field(description="ID ученика")]
 
 
@@ -33,7 +33,7 @@ class RecordDeleted(BaseModel):
 
 
 class UpdateRecordScore(BaseModel):
-    subjectname: Annotated[enums.SubjectName, Field(description="Название предмета")]
+    subjectname: Annotated[SubjectName, Field(description="Название предмета")]
     new_score: Annotated[int, Field(description="Новое кол-во баллов", ge=0, le=100)]
     studentid: Annotated[int, Field(description="ID ученика")]
 
