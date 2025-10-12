@@ -15,5 +15,5 @@ def get_records_list(records: dict[str, int]) -> Text:
     subjects_list = as_list(
         *[as_key_value(name, score) for name, score in records.items()]
     )
-    content = as_section("Ваши баллы:", subjects_list)
+    content = as_section("Твои баллы:", subjects_list)
     return content
