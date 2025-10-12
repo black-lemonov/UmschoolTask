@@ -2,7 +2,9 @@ from fastapi import APIRouter, Response, status
 
 from src import services
 from src.adapters import repository
-from src.entrypoints.fastapi_app import deps, schemas
+from src.entrypoints.fastapi_app import deps
+from src.entrypoints.fastapi_app.schemas import student as schemas
+
 
 
 router = APIRouter(tags=["Профиль 👤"])
@@ -14,11 +16,11 @@ router = APIRouter(tags=["Профиль 👤"])
     responses={
         200: {
             "description": "Успешное создание записи",
-            "model": schemas.SuccessMessageResponse,
+            "model": schemas.StudentSignedUp,
         },
         400: {
             "description": "Ученик уже существует",
-            "model": schemas.ErrorMessageResponse,
+            "model": schemas.StudentAlreadySignedUp,
         },
     },
 )
@@ -34,10 +36,11 @@ async def signup(
             student_repo,
             session,
         )
-    except services.StudentAlreadyExists as e:
+    except services.StudentAlreadyExists:
         response.status_code = status.HTTP_400_BAD_REQUEST
-        return {"msg": str(e)}
-    return {"msg": "Запись ученика создана"}
+        return schemas.StudentAlreadySignedUp()
+    
+    return schemas.StudentSignedUp()
 
 
 @router.post(
@@ -45,8 +48,8 @@ async def signup(
     summary="Войти по id",
     status_code=status.HTTP_200_OK,
     responses={
-        200: {"description": "Успешный вход", "model": schemas.SuccessMessageResponse},
-        404: {"description": "Ученик не найден", "model": schemas.ErrorMessageResponse},
+        200: {"description": "Успешный вход", "model": schemas.StudentSignedIn},
+        401: {"description": "Вход не выполнен", "model": schemas.StudentDoesNotExist},
     },
 )
 async def signin(
@@ -55,10 +58,11 @@ async def signin(
     student_repo = repository.SQLAlchemyStudentRepository(session)
     try:
         await services.signin(student.studentid, student_repo)
-    except services.StudentDoesNotExist as e:
+    except services.StudentDoesNotExist:
         response.status_code = status.HTTP_404_NOT_FOUND
-        return {"msg": str(e)}
-    return {"msg": "Вход выполнен"}
+        return schemas.StudentDoesNotExist()
+    
+    return schemas.StudentSignedIn()
 
 
 @router.put(
@@ -67,9 +71,9 @@ async def signin(
     responses={
         200: {
             "description": "Данные успешно обновлены",
-            "model": schemas.SuccessMessageResponse,
+            "model": schemas.StudentUpdated,
         },
-        404: {"description": "Ученик не найден", "model": schemas.ErrorMessageResponse},
+        401: {"description": "Ученик не найден", "model": schemas.StudentDoesNotExist},
     },
 )
 async def update_student(
@@ -84,7 +88,8 @@ async def update_student(
             student_repo,
             session,
         )
-    except services.StudentDoesNotExist as e:
+    except services.StudentDoesNotExist:
         response.status_code = status.HTTP_404_NOT_FOUND
-        return {"msg": str(e)}
-    return {"msg": "Информация обновлена"}
+        return schemas.StudentDoesNotExist()
+    
+    return schemas.StudentUpdated()
