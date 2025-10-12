@@ -10,4 +10,6 @@ def get_bot_token() -> str:
 
 
 def get_base_api() -> str:
-    return "http://127.0.0.1:8000"
+    host = os.getenv("API_HOST")
+    port = os.getenv("API_PORT")
+    return f"http://{host}:{port}"
