@@ -29,7 +29,7 @@ async def signup(
     """
     try:
         if await student_repo.get(studentid):
-            raise StudentAlreadyExists("Ученик с таким id уже существует")
+            raise StudentAlreadyExists("Ученик уже существует")
     except NoResultFound:
         pass
 
@@ -40,12 +40,12 @@ async def signup(
 
 async def signin(studentid: int, student_repo: repository.AbstractStudentRepository):
     """
-    Вход ученика по id
+    Вход ученика по id, если ученик не найден вызывает исключение
     """
     try:
         await student_repo.get(studentid)
     except NoResultFound:
-        raise StudentDoesNotExist("Ученик с таким id не найден")
+        raise StudentDoesNotExist("Ученик не найден")
 
 
 async def update_student(
@@ -61,7 +61,7 @@ async def update_student(
     try:
         await student_repo.get(studentid)
     except NoResultFound:
-        raise StudentDoesNotExist("Ученик с таким id не найден")
+        raise StudentDoesNotExist("Ученик не найден")
 
     student = await student_repo.get(studentid)
     student.firstname = firstname

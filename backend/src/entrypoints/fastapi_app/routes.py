@@ -106,11 +106,23 @@ async def update_student(
             "description": "Запись уже существует",
             "model": schemas.ErrorMessageResponse,
         },
+        401: {
+            "description": "Ученик не найден",
+            "model": schemas.ErrorMessageResponse
+        }
     },
 )
 async def add_record(
     examrecord: schemas.AddExamRecord, session: deps.SessionDep, response: Response
 ):
+    student_repo = repository.SQLAlchemyStudentRepository(session)
+
+    try:
+        await services.signin(examrecord.studentid, student_repo)
+    except services.StudentDoesNotExist as e:
+        response.status_code = 401
+        return {"msg": str(e)}
+
     records_repo = repository.SQLAlchemyExamRecordRepository(session)
     try:
         await services.add_record(
@@ -193,12 +205,24 @@ async def update_record_score(
         200: {
             "description": "Список записей успешно получен",
             "model": dict[str, int]
+        },
+        401: {
+            "description": "Ученик не найден",
+            "model": schemas.ErrorMessageResponse
         }
     },
 )
 async def list_records(
-    studentid: Annotated[int, Query(description="ID ученика")], session: deps.SessionDep
+    studentid: Annotated[int, Query(description="ID ученика")], session: deps.SessionDep, response: Response
 ):
+    student_repo = repository.SQLAlchemyStudentRepository(session)
+
+    try:
+        await services.signin(studentid, student_repo)
+    except services.StudentDoesNotExist as e:
+        response.status_code = 401
+        return {"msg": str(e)}
+    
     records_repo = repository.SQLAlchemyExamRecordRepository(session)
     return await services.list_records(studentid, records_repo)
 
