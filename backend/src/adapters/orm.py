@@ -20,19 +20,19 @@ examrecords = Table(
     mapper_registry.metadata,
     Column("subjectname", Enum(domain.SubjectName), primary_key=True),
     Column("score", Integer),
-    Column("studentid", Integer, ForeignKey("students.id", ondelete="CASCADE"), primary_key=True),
+    Column(
+        "studentid",
+        Integer,
+        ForeignKey("students.id", ondelete="CASCADE"),
+        primary_key=True,
+    ),
 )
 
 
 def start_mappers():
-    mapper_registry.map_imperatively(
-        domain.Student,
-        students
-    )
+    mapper_registry.map_imperatively(domain.Student, students)
     mapper_registry.map_imperatively(
         domain.ExamRecord,
         examrecords,
-        properties={
-            "student": relationship(domain.Student)
-        }
+        properties={"student": relationship(domain.Student)},
     )

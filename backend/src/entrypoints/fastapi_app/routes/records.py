@@ -25,7 +25,8 @@ router = APIRouter(tags=["Предметы и баллы ✍️"])
             "model": schemas.RecordAlreadyExists,
         },
         401: {
-            "description": "Ученик не найден", "model": student_schemas.StudentDoesNotExist
+            "description": "Ученик не найден",
+            "model": student_schemas.StudentDoesNotExist,
         },
     },
 )
@@ -52,7 +53,7 @@ async def add_record(
     except services.RecordAlreadyExists:
         response.status_code = status.HTTP_400_BAD_REQUEST
         return schemas.RecordAlreadyExists()
-    
+
     return schemas.RecordAdded()
 
 
@@ -64,7 +65,10 @@ async def add_record(
             "description": "Запись успешно удалена",
             "model": schemas.RecordDeleted,
         },
-        401: {"description": "Ученик не найден", "model": student_schemas.StudentDoesNotExist},
+        401: {
+            "description": "Ученик не найден",
+            "model": student_schemas.StudentDoesNotExist,
+        },
         404: {
             "description": "Запись не найдена",
             "model": schemas.RecordDoesNotExist,
@@ -81,7 +85,7 @@ async def delete_record(
     except services.StudentDoesNotExist:
         response.status_code = 401
         return student_schemas.StudentDoesNotExist()
-    
+
     records_repo = repository.SQLAlchemyExamRecordRepository(session)
     try:
         await services.delete_record(
@@ -90,7 +94,7 @@ async def delete_record(
     except services.RecordDoesNotExist:
         response.status_code = status.HTTP_404_NOT_FOUND
         return schemas.RecordDoesNotExist()
-    
+
     return schemas.RecordDeleted()
 
 
@@ -102,7 +106,10 @@ async def delete_record(
             "description": "Баллы успешно обновлены",
             "model": schemas.RecordScoreUpdated,
         },
-        401: {"description": "Ученик не найден", "model": student_schemas.StudentDoesNotExist},
+        401: {
+            "description": "Ученик не найден",
+            "model": student_schemas.StudentDoesNotExist,
+        },
         404: {
             "description": "Запись не найдена",
             "model": schemas.RecordDoesNotExist,
@@ -119,7 +126,7 @@ async def update_record_score(
     except services.StudentDoesNotExist:
         response.status_code = 401
         return student_schemas.StudentDoesNotExist()
-    
+
     records_repo = repository.SQLAlchemyExamRecordRepository(session)
     try:
         await services.update_record_score(
@@ -132,7 +139,7 @@ async def update_record_score(
     except services.RecordDoesNotExist:
         response.status_code = status.HTTP_404_NOT_FOUND
         return schemas.RecordDoesNotExist()
-    
+
     return schemas.RecordScoreUpdated()
 
 
@@ -141,7 +148,10 @@ async def update_record_score(
     summary="Получить все предметы с баллами ученика",
     responses={
         200: {"description": "Список записей успешно получен", "model": dict[str, int]},
-        401: {"description": "Ученик не найден", "model": student_schemas.StudentDoesNotExist},
+        401: {
+            "description": "Ученик не найден",
+            "model": student_schemas.StudentDoesNotExist,
+        },
     },
 )
 async def list_records(

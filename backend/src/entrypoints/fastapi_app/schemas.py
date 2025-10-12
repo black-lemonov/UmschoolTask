@@ -5,7 +5,6 @@ from pydantic import BaseModel, Field
 from src.entrypoints.fastapi_app import enums
 
 
-
 class AddExamRecord(BaseModel):
     subjectname: Annotated[enums.SubjectName, Field(description="Название предмета")]
     score: Annotated[int, Field(description="Кол-во баллов", ge=0, le=100)]

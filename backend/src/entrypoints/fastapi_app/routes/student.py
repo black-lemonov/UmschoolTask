@@ -6,7 +6,6 @@ from src.entrypoints.fastapi_app import deps
 from src.entrypoints.fastapi_app.schemas import student as schemas
 
 
-
 router = APIRouter(tags=["Профиль 👤"])
 
 
@@ -39,7 +38,7 @@ async def signup(
     except services.StudentAlreadyExists:
         response.status_code = status.HTTP_400_BAD_REQUEST
         return schemas.StudentAlreadySignedUp()
-    
+
     return schemas.StudentSignedUp()
 
 
@@ -61,7 +60,7 @@ async def signin(
     except services.StudentDoesNotExist:
         response.status_code = status.HTTP_404_NOT_FOUND
         return schemas.StudentDoesNotExist()
-    
+
     return schemas.StudentSignedIn()
 
 
@@ -91,5 +90,5 @@ async def update_student(
     except services.StudentDoesNotExist:
         response.status_code = status.HTTP_404_NOT_FOUND
         return schemas.StudentDoesNotExist()
-    
+
     return schemas.StudentUpdated()

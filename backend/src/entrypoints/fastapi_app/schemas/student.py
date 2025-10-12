@@ -48,6 +48,3 @@ class UpdateStudent(BaseStudent):
 
 class StudentUpdated(BaseModel):
     msg: str = "Данные ученика обновлены!"
-
-
-
