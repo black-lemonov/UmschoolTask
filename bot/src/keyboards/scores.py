@@ -18,9 +18,6 @@ def get_records_list(records: dict[str, int]) -> Text:
         )
     else:
         subjects_list = "Пусто"
-    
-    content = as_section(
-        "Ваши предметы:",
-        subjects_list
-    )
+
+    content = as_section("Ваши предметы:", subjects_list)
     return content

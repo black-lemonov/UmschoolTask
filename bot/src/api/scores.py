@@ -13,7 +13,7 @@ async def get_available_subjects() -> list[str]:
                 data = await response.json()
                 return data
             return []
-        
+
 
 async def create_subject_record(subjectname: str, score: int, studentid: int) -> None:
     """
@@ -28,14 +28,14 @@ async def create_subject_record(subjectname: str, score: int, studentid: int) ->
                 "studentid": studentid,
             },
         ) as response:
-            if response.status == 200:
-                return
-            elif response.status == 400:
+            if response.status == 400:
                 raise exc.AlreadyExists("Запись по предмету уже существует!")
             elif response.status == 401:
                 raise exc.Unauthorized("Ошибка! Вы не зарегистрированы!")
             elif response.status == 422:
-                raise exc.WrongArguments("При выборе предмета или вводе баллов была допущена ошибка. Повторите ввод.")
+                raise exc.WrongArguments(
+                    "При выборе предмета или вводе баллов была допущена ошибка. Повторите ввод."
+                )
 
 
 async def get_student_records(studentid: int) -> dict[str, int]:
