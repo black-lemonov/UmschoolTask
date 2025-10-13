@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Response, status
+from loguru import logger
 
 from src import services
 from src.adapters import repository
@@ -28,6 +29,7 @@ async def signup(
 ):
     student_repo = repository.SQLAlchemyStudentRepository(session)
     try:
+        logger.info(f"Signing up student {student.studentid} ...")
         await services.signup(
             student.firstname,
             student.lastname,
@@ -35,7 +37,8 @@ async def signup(
             student_repo,
             session,
         )
-    except services.StudentAlreadyExists:
+    except services.StudentAlreadyExists as e:
+        logger.error(f"Sign up error: {str(e)}")
         response.status_code = status.HTTP_400_BAD_REQUEST
         return schemas.StudentAlreadySignedUp()
 
@@ -56,8 +59,10 @@ async def signin(
 ):
     student_repo = repository.SQLAlchemyStudentRepository(session)
     try:
+        logger.info(f"Signing in student {student.studentid} ...")
         await services.signin(student.studentid, student_repo)
-    except services.StudentDoesNotExist:
+    except services.StudentDoesNotExist as e:
+        logger.error(f"Sign in error: {str(e)}")
         response.status_code = status.HTTP_404_NOT_FOUND
         return schemas.StudentDoesNotExist()
 
@@ -80,6 +85,7 @@ async def update_student(
 ):
     student_repo = repository.SQLAlchemyStudentRepository(session)
     try:
+        logger.info(f"Trying to update student {student.studentid} ...")
         await services.update_student(
             student.firstname,
             student.lastname,
@@ -87,7 +93,8 @@ async def update_student(
             student_repo,
             session,
         )
-    except services.StudentDoesNotExist:
+    except services.StudentDoesNotExist as e:
+        logger.error(f"Update student error: {str(e)}")
         response.status_code = status.HTTP_404_NOT_FOUND
         return schemas.StudentDoesNotExist()
 

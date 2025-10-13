@@ -1,6 +1,7 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Response, status, Query
+from loguru import logger
 
 from src.entrypoints.fastapi_app import deps
 from src.entrypoints.fastapi_app.schemas import records as schemas
@@ -35,6 +36,7 @@ async def add_record(
 ):
     records_repo = repository.SQLAlchemyExamRecordRepository(session)
     try:
+        logger.info(f"Adding record for student {examrecord.studentid} ...")
         await services.add_record(
             examrecord.subjectname,
             examrecord.score,
@@ -42,10 +44,12 @@ async def add_record(
             records_repo,
             session,
         )
-    except services.RecordAlreadyExists:
+    except services.RecordAlreadyExists as e:
+        logger.error(f"Add record error: {str(e)}")
         response.status_code = status.HTTP_400_BAD_REQUEST
         return schemas.RecordAlreadyExists()
-    except services.StudentDoesNotExist:
+    except services.StudentDoesNotExist as e:
+        logger.error(f"Add record error: {str(e)}")
         response.status_code = 401
         return student_schemas.StudentDoesNotExist()
 
@@ -71,10 +75,12 @@ async def delete_record(
 ):
     records_repo = repository.SQLAlchemyExamRecordRepository(session)
     try:
+        logger.info(f"Trying to delete student {record.studentid} record ...")
         await services.delete_record(
             record.subjectname, record.studentid, records_repo, session
         )
-    except services.RecordDoesNotExist:
+    except services.RecordDoesNotExist as e:
+        logger.error(f"Delete record error: {str(e)}")
         response.status_code = status.HTTP_404_NOT_FOUND
         return schemas.RecordDoesNotExist()
 
@@ -104,6 +110,7 @@ async def update_record_score(
 ):
     records_repo = repository.SQLAlchemyExamRecordRepository(session)
     try:
+        logger.info(f"Trying to update student {record.studentid} record ...")
         await services.update_record_score(
             record.subjectname,
             record.new_score,
@@ -111,7 +118,8 @@ async def update_record_score(
             records_repo,
             session,
         )
-    except services.RecordDoesNotExist:
+    except services.RecordDoesNotExist as e:
+        logger.error(f"Update record error: {str(e)}")
         response.status_code = status.HTTP_404_NOT_FOUND
         return schemas.RecordDoesNotExist()
 
@@ -134,11 +142,12 @@ async def list_records(
     session: deps.SessionDep,
     response: Response,
 ):
+    logger.info(f"Getting records for {studentid} ...")
     student_repo = repository.SQLAlchemyStudentRepository(session)
-
     try:
         await services.signin(studentid, student_repo)
-    except services.StudentDoesNotExist:
+    except services.StudentDoesNotExist as e:
+        logger.error(f"Getting records error: {str(e)}")
         response.status_code = 401
         return student_schemas.StudentDoesNotExist()
 
