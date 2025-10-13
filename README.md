@@ -23,7 +23,7 @@ docker compose up
 Для запуска тестов выполните команды:
 ```sh
 # Запуск тестовой базы данных
-docker run -p 54321:5432 --env-file=test.db.env --name=test_db -d postgres
+docker run -p 54321:5432 -e POSTGRES_PASSWORD=123 -e POSTGRES_USER=test -e POSTGRES_DB=test --name=test_db -d postgres
 
 # Запуск тестов
 cd backend
