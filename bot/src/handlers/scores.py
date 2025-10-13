@@ -38,7 +38,7 @@ async def subject_chosen(callback: types.CallbackQuery, state: context.FSMContex
     await asyncio.sleep(1)
     await callback.message.delete()
 
-    await callback.message.answer("Баллы по предмету:")
+    await callback.message.answer("Введи баллы:")
     await callback.answer()
     await state.set_state(EnterScoresState.entering_score)
 
@@ -48,7 +48,7 @@ async def score_entered(message: types.Message, state: context.FSMContext):
     try:
         score = int(message.text)
     except ValueError:
-        await message.answer("Баллы должны быть числом! Введи баллы повторно.")
+        await message.answer("Баллы должны быть числом! Введи баллы снова")
         return
 
     user_data = await state.get_data()
@@ -77,7 +77,7 @@ async def view_scores(message: types.Message):
         if records:
             await message.answer(**keyboards.get_records_list(records).as_kwargs())
         else:
-            await message.answer("У тебя пока нет предметов")
+            await message.answer("Пока нет предметов")
     except exc.Unauthorized as e:
         await message.answer(str(e))
     except exc.APIError as e:

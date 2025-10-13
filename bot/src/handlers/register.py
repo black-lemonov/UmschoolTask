@@ -16,9 +16,9 @@ class RegisterState(state.StatesGroup):
 async def register(message: types.Message, state: context.FSMContext):
     try:
         await api.try_to_signin(message.from_user.id)
-        await message.answer("Ты уже зарегистрирован")
+        await message.answer("Профиль уже зарегистрирован")
     except exc.Unauthorized:
-        await message.answer("Твоё имя:")
+        await message.answer("Введи имя:")
         await state.set_state(RegisterState.entering_firstname)
     except exc.APIError as e:
         await message.answer(str(e))
@@ -27,7 +27,7 @@ async def register(message: types.Message, state: context.FSMContext):
 @router.message(RegisterState.entering_firstname)
 async def firstname_entered(message: types.Message, state: context.FSMContext):
     await state.update_data(firstname=message.text)
-    await message.answer("Твоя фамилия:")
+    await message.answer("Введи фамилию:")
     await state.set_state(RegisterState.entering_lastname)
 
 
@@ -45,7 +45,7 @@ async def lastname_entered(message: types.Message, state: context.FSMContext):
         await state.clear()
     except exc.WrongArguments as e:
         await message.answer(str(e))
-        await message.answer("Твоё имя:")
+        await message.answer("Введи имя:")
         await state.set_state(RegisterState.entering_firstname)
     except exc.APIError as e:
         await message.answer(str(e))
