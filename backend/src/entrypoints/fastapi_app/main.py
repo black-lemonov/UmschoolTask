@@ -13,7 +13,7 @@ logger.remove()
 logger.add(
     sys.stderr,
     level="INFO",
-    format="<green>{level}</green>:<cyan>{function:>15}</cyan> - <level>{message}</level>"
+    format="<green>{level:10}</green><cyan>{function}</cyan> - <level>{message}</level>"
 )
 
 
