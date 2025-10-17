@@ -3,6 +3,6 @@ include:
 services:
   bot:
     build: 
-      context: /bot
+      context: ./bot
       dockerfile: Dockerfile
   
