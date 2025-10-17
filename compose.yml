@@ -1,0 +1,8 @@
+include:
+  - backend/compose.yml
+services:
+  bot:
+    build: 
+      context: /bot
+      dockerfile: Dockerfile
+  
