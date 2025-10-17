@@ -10,4 +10,6 @@ def get_bot_token() -> str:
 
 
 def get_base_api() -> str:
-    return "http://backend:5000"
+    host = os.getenv("API_HOST")
+    port = os.getenv("API_PORT")
+    return f"http://{host}:{port}"
